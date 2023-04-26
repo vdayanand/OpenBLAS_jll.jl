@@ -1,0 +1,49 @@
+name: Artifact
+on:
+  pull_request:
+    paths:
+    - 'Artifact.toml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: get file in the default branch
+      id: default_file
+      run: |
+        defaultfile=$(mktemp)
+        cp Artifact.toml defaultfile
+        echo $defaultfile >> $GITHUB_OUTPUT
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Get PR branch name
+      run: echo "${{ github.head_ref }}" > pr_branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout PR branch
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ env.PR_BRANCH }}
+
+    - name: Get file contents from PR branch
+      id: current_file
+      run: |
+        defaultfile=$(mktemp)
+        cp Artifact.toml defaultfile
+        echo $defaultfile >> $GITHUB_OUTPUT
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: 1.6
+
+    - name: Read file contents with Julia
+      run: julia --project=. -e "@info read("${{join(steps.default_file.outputs)}}", String)"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
