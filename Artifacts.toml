@@ -1,6 +1,6 @@
 [[OpenBLAS]]
 arch = "aarch64"
-git-tree-sha1 = "08bb912954265e65731f7d220386133a215ca1aa"
+git-tree-sha1 = "08bb912954265e65731f7d220386133a215ca1ab"
 libgfortran_version = "5.0.0"
 os = "macos"
 
